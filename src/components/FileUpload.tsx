@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useMedFlow } from '@/context/MedFlowContext';
-import { FilePdf, Upload, X } from 'lucide-react';
+import { FileText, Upload } from 'lucide-react';
 
 const FileUpload = () => {
   const { handleFileUpload, isProcessing, file } = useMedFlow();
@@ -75,7 +75,7 @@ const FileUpload = () => {
           />
           {file ? (
             <div className="flex flex-col items-center">
-              <FilePdf size={48} className="text-medical-600 mb-2" />
+              <FileText size={48} className="text-medical-600 mb-2" />
               <p className="font-medium text-gray-700">{file.name}</p>
               <p className="text-sm text-gray-500">
                 {(file.size / 1024 / 1024).toFixed(2)} MB

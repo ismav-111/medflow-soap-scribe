@@ -83,10 +83,10 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
       const reviewToUpdate = icdReviews.find(review => review.id === id);
       if (!reviewToUpdate) return;
       
-      const updatedReview = {
+      const updatedReview: IcdReview = {
         ...reviewToUpdate,
         feedback: feedback.feedbackText,
-        status: feedback.isCorrect ? 'approved' : 'rejected'
+        status: feedback.isCorrect ? 'approved' : 'rejected' as 'approved' | 'rejected'
       };
       
       const processedReview = feedback.isCorrect 
