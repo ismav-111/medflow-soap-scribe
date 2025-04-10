@@ -22,16 +22,16 @@ const IcdReview = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
-        return <Badge className="bg-green-500">Approved</Badge>;
+        return <Badge className="bg-green-500 hover:bg-green-600"><CheckCircle className="h-3 w-3 mr-1" /> Approved</Badge>;
       case 'rejected':
-        return <Badge className="bg-red-500">Feedback Provided</Badge>;
+        return <Badge className="bg-red-500 hover:bg-red-600"><XCircle className="h-3 w-3 mr-1" /> Feedback</Badge>;
       default:
-        return <Badge className="bg-yellow-500">Pending Review</Badge>;
+        return <Badge className="bg-yellow-500 hover:bg-yellow-600">Pending</Badge>;
     }
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full max-w-4xl mx-auto backdrop-blur-sm bg-white/80 border border-gray-200 shadow-md">
       <CardHeader>
         <CardTitle className="text-2xl font-semibold text-center text-medical-700">
           Review ICD Codes
@@ -41,50 +41,47 @@ const IcdReview = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-16">S.No</TableHead>
-              <TableHead>Term</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>ICD Code</TableHead>
-              <TableHead className="w-[150px]">Reasons</TableHead>
-              <TableHead className="w-[150px]">Feedback</TableHead>
-              <TableHead className="w-[120px]">Status</TableHead>
-              <TableHead className="w-[100px]">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {icdReviews.map((review, index) => (
-              <TableRow key={review.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell className="font-medium">{review.term}</TableCell>
-                <TableCell>{review.title}</TableCell>
-                <TableCell className="font-mono">{review.icdCode}</TableCell>
-                <TableCell className="text-sm">{review.reasons}</TableCell>
-                <TableCell className="text-sm">
-                  {review.feedback ? review.feedback : '-'}
-                </TableCell>
-                <TableCell>{getStatusBadge(review.status)}</TableCell>
-                <TableCell>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleReviewClick(review)}
-                    disabled={isProcessing}
-                  >
-                    Review
-                  </Button>
-                </TableCell>
+        <div className="rounded-lg overflow-hidden border border-gray-100">
+          <Table>
+            <TableHeader className="bg-gray-50">
+              <TableRow>
+                <TableHead className="w-14 text-center">#</TableHead>
+                <TableHead>Term</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead className="font-mono">Code</TableHead>
+                <TableHead className="w-[120px]">Status</TableHead>
+                <TableHead className="w-[80px] text-center">Action</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {icdReviews.map((review, index) => (
+                <TableRow key={review.id} className="hover:bg-gray-50/80">
+                  <TableCell className="text-center font-medium">{index + 1}</TableCell>
+                  <TableCell className="font-medium">{review.term}</TableCell>
+                  <TableCell>{review.title}</TableCell>
+                  <TableCell className="font-mono text-medical-700">{review.icdCode}</TableCell>
+                  <TableCell>{getStatusBadge(review.status)}</TableCell>
+                  <TableCell className="text-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleReviewClick(review)}
+                      disabled={isProcessing}
+                      className="hover:bg-gray-100"
+                    >
+                      Review
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
         {allIcdCodesApproved && (
           <div className="mt-6 flex justify-center">
-            <Button className="bg-green-600 hover:bg-green-700 flex items-center">
-              <FileText className="mr-2 h-4 w-4" />
+            <Button className="bg-medical-600 hover:bg-medical-700 flex items-center gap-2 shadow-sm">
+              <FileText className="h-4 w-4" />
               Generate Final Report
             </Button>
           </div>
