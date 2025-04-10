@@ -5,19 +5,97 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useMedFlow } from '@/context/MedFlowContext';
-import { CheckCircle, XCircle, FileText, Info } from 'lucide-react';
+import { CheckCircle, XCircle, FileText, Info, Plus, Edit, Trash2 } from 'lucide-react';
 import { IcdReview as IcdReviewType } from '@/types';
 import FeedbackDialog from './FeedbackDialog';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const IcdReview = () => {
-  const { icdReviews, provideFeedback, isProcessing, allIcdCodesApproved } = useMedFlow();
+  const { 
+    icdReviews, 
+    provideFeedback, 
+    isProcessing, 
+    allIcdCodesApproved,
+    addIcdReview,
+    updateIcdReview,
+    deleteIcdReview 
+  } = useMedFlow();
+  
   const [selectedReview, setSelectedReview] = useState<IcdReviewType | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
+  const [editForm, setEditForm] = useState({
+    id: '',
+    term: '',
+    title: '',
+    icdCode: '',
+    reasons: '',
+    feedback: '',
+    status: 'pending' as 'pending' | 'approved' | 'rejected'
+  });
+
+  // Handle opening the review dialog
   const handleReviewClick = (review: IcdReviewType) => {
     setSelectedReview(review);
     setDialogOpen(true);
+  };
+
+  // Handle opening the edit dialog
+  const handleEditClick = (review: IcdReviewType) => {
+    setEditForm(review);
+    setIsEditing(true);
+  };
+
+  // Handle opening the delete confirmation
+  const handleDeleteClick = (review: IcdReviewType) => {
+    setSelectedReview(review);
+    setIsDeleting(true);
+  };
+
+  // Handle opening the add new dialog
+  const handleAddClick = () => {
+    setEditForm({
+      id: `icd-${Date.now()}`,
+      term: '',
+      title: '',
+      icdCode: '',
+      reasons: '',
+      feedback: '',
+      status: 'pending'
+    });
+    setIsAdding(true);
+  };
+
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEditForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Handle save of edited item
+  const handleSaveEdit = () => {
+    updateIcdReview(editForm);
+    setIsEditing(false);
+  };
+
+  // Handle adding new item
+  const handleSaveAdd = () => {
+    addIcdReview(editForm);
+    setIsAdding(false);
+  };
+
+  // Handle confirming deletion
+  const handleConfirmDelete = () => {
+    if (selectedReview) {
+      deleteIcdReview(selectedReview.id);
+      setIsDeleting(false);
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -33,13 +111,22 @@ const IcdReview = () => {
 
   return (
     <Card className="w-full max-w-4xl mx-auto backdrop-blur-sm bg-white/80 border border-gray-200 shadow-md">
-      <CardHeader>
-        <CardTitle className="text-2xl font-semibold text-center text-medical-700">
-          Review ICD Codes
-        </CardTitle>
-        <CardDescription className="text-center">
-          Review and provide feedback on the generated ICD codes
-        </CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle className="text-2xl font-semibold text-center text-medical-700">
+            Review ICD Codes
+          </CardTitle>
+          <CardDescription className="text-center">
+            Review and provide feedback on the generated ICD codes
+          </CardDescription>
+        </div>
+        <Button 
+          onClick={handleAddClick}
+          className="bg-medical-600 hover:bg-medical-700"
+          disabled={isProcessing}
+        >
+          <Plus className="h-4 w-4 mr-1" /> Add ICD Code
+        </Button>
       </CardHeader>
       <CardContent>
         <div className="rounded-lg overflow-hidden border border-gray-100">
@@ -53,11 +140,11 @@ const IcdReview = () => {
                 <TableHead>Term</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead className="w-28">Status</TableHead>
-                <TableHead className="w-32 text-center">Action</TableHead>
+                <TableHead className="w-40 text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {icdReviews.map((review, index) => (
+              {icdReviews.map((review) => (
                 <TableRow key={review.id} className="hover:bg-gray-50/80">
                   <TableCell className="text-center">
                     <Checkbox 
@@ -89,6 +176,24 @@ const IcdReview = () => {
                       >
                         <Info className="h-4 w-4 text-gray-500" />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-gray-100"
+                        onClick={() => handleEditClick(review)}
+                        disabled={isProcessing}
+                      >
+                        <Edit className="h-4 w-4 text-blue-500" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-gray-100"
+                        onClick={() => handleDeleteClick(review)}
+                        disabled={isProcessing}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -114,6 +219,148 @@ const IcdReview = () => {
             onSubmit={(feedback) => provideFeedback(selectedReview.id, feedback)}
           />
         )}
+
+        {/* Edit Dialog */}
+        <Dialog open={isEditing} onOpenChange={setIsEditing}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit ICD Code</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="icdCode" className="text-right">
+                  ICD Code
+                </Label>
+                <Input
+                  id="icdCode"
+                  name="icdCode"
+                  value={editForm.icdCode}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="term" className="text-right">
+                  Term
+                </Label>
+                <Input
+                  id="term"
+                  name="term"
+                  value={editForm.term}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="title" className="text-right">
+                  Title
+                </Label>
+                <Input
+                  id="title"
+                  name="title"
+                  value={editForm.title}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="reasons" className="text-right">
+                  Reasons
+                </Label>
+                <Input
+                  id="reasons"
+                  name="reasons"
+                  value={editForm.reasons}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+              <Button onClick={handleSaveEdit}>Save Changes</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add New Dialog */}
+        <Dialog open={isAdding} onOpenChange={setIsAdding}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New ICD Code</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="icdCode" className="text-right">
+                  ICD Code
+                </Label>
+                <Input
+                  id="icdCode"
+                  name="icdCode"
+                  value={editForm.icdCode}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="term" className="text-right">
+                  Term
+                </Label>
+                <Input
+                  id="term"
+                  name="term"
+                  value={editForm.term}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="title" className="text-right">
+                  Title
+                </Label>
+                <Input
+                  id="title"
+                  name="title"
+                  value={editForm.title}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="reasons" className="text-right">
+                  Reasons
+                </Label>
+                <Input
+                  id="reasons"
+                  name="reasons"
+                  value={editForm.reasons}
+                  onChange={handleInputChange}
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAdding(false)}>Cancel</Button>
+              <Button onClick={handleSaveAdd}>Add ICD Code</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isDeleting} onOpenChange={setIsDeleting}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+            </DialogHeader>
+            <p className="py-4">
+              Are you sure you want to delete ICD code {selectedReview?.icdCode} for {selectedReview?.term}? This action cannot be undone.
+            </p>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDeleting(false)}>Cancel</Button>
+              <Button variant="destructive" onClick={handleConfirmDelete}>Delete</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );

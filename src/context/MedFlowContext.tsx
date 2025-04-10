@@ -17,6 +17,9 @@ interface MedFlowContextType {
   provideFeedback: (id: string, feedback: FeedbackForm) => Promise<void>;
   allIcdCodesApproved: boolean;
   resetWorkflow: () => void;
+  addIcdReview: (review: IcdReview) => void;
+  updateIcdReview: (review: IcdReview) => void;
+  deleteIcdReview: (id: string) => void;
 }
 
 const MedFlowContext = createContext<MedFlowContextType | undefined>(undefined);
@@ -86,7 +89,7 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
       const updatedReview: IcdReview = {
         ...reviewToUpdate,
         feedback: feedback.feedbackText,
-        status: feedback.isCorrect ? 'approved' : 'rejected' as 'approved' | 'rejected'
+        status: feedback.isCorrect ? 'approved' : 'rejected'
       };
       
       const processedReview = feedback.isCorrect 
@@ -128,6 +131,65 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Add a new ICD review
+  const addIcdReview = (review: IcdReview) => {
+    try {
+      setIcdReviews(prev => [...prev, review]);
+      toast({
+        title: "Success",
+        description: `ICD code ${review.icdCode} added successfully`,
+      });
+    } catch (error) {
+      console.error('Error adding ICD code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add ICD code",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Update an existing ICD review
+  const updateIcdReview = (review: IcdReview) => {
+    try {
+      setIcdReviews(prev => 
+        prev.map(r => r.id === review.id ? review : r)
+      );
+      toast({
+        title: "Success",
+        description: `ICD code ${review.icdCode} updated successfully`,
+      });
+    } catch (error) {
+      console.error('Error updating ICD code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update ICD code",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Delete an ICD review
+  const deleteIcdReview = (id: string) => {
+    try {
+      const reviewToDelete = icdReviews.find(r => r.id === id);
+      setIcdReviews(prev => prev.filter(r => r.id !== id));
+      toast({
+        title: "Success", 
+        description: reviewToDelete 
+          ? `ICD code ${reviewToDelete.icdCode} deleted successfully` 
+          : "ICD code deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting ICD code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete ICD code",
+        variant: "destructive",
+      });
+    }
+  };
+
   const resetWorkflow = () => {
     setFile(null);
     setSoapData(null);
@@ -150,7 +212,10 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
     confirmSoap,
     provideFeedback,
     allIcdCodesApproved,
-    resetWorkflow
+    resetWorkflow,
+    addIcdReview,
+    updateIcdReview,
+    deleteIcdReview
   };
 
   return <MedFlowContext.Provider value={value}>{children}</MedFlowContext.Provider>;
