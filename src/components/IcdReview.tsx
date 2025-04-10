@@ -5,9 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useMedFlow } from '@/context/MedFlowContext';
-import { CheckCircle, XCircle, FileText } from 'lucide-react';
+import { CheckCircle, XCircle, FileText, Info } from 'lucide-react';
 import { IcdReview as IcdReviewType } from '@/types';
 import FeedbackDialog from './FeedbackDialog';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const IcdReview = () => {
   const { icdReviews, provideFeedback, isProcessing, allIcdCodesApproved } = useMedFlow();
@@ -45,32 +46,50 @@ const IcdReview = () => {
           <Table>
             <TableHeader className="bg-gray-50">
               <TableRow>
-                <TableHead className="w-14 text-center">#</TableHead>
+                <TableHead className="w-10 text-center">
+                  <Checkbox id="select-all" />
+                </TableHead>
+                <TableHead className="w-24 font-mono">Code</TableHead>
                 <TableHead>Term</TableHead>
                 <TableHead>Title</TableHead>
-                <TableHead className="font-mono">Code</TableHead>
-                <TableHead className="w-[120px]">Status</TableHead>
-                <TableHead className="w-[80px] text-center">Action</TableHead>
+                <TableHead className="w-28">Status</TableHead>
+                <TableHead className="w-32 text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {icdReviews.map((review, index) => (
                 <TableRow key={review.id} className="hover:bg-gray-50/80">
-                  <TableCell className="text-center font-medium">{index + 1}</TableCell>
-                  <TableCell className="font-medium">{review.term}</TableCell>
-                  <TableCell>{review.title}</TableCell>
-                  <TableCell className="font-mono text-medical-700">{review.icdCode}</TableCell>
-                  <TableCell>{getStatusBadge(review.status)}</TableCell>
                   <TableCell className="text-center">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => handleReviewClick(review)}
-                      disabled={isProcessing}
-                      className="hover:bg-gray-100"
-                    >
-                      Review
-                    </Button>
+                    <Checkbox 
+                      id={`review-${review.id}`}
+                      checked={review.status === 'approved'}
+                      disabled={true}
+                    />
+                  </TableCell>
+                  <TableCell className="font-mono text-medical-700 font-medium">{review.icdCode}</TableCell>
+                  <TableCell>{review.term}</TableCell>
+                  <TableCell>{review.title}</TableCell>
+                  <TableCell>{getStatusBadge(review.status)}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1 justify-center">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleReviewClick(review)}
+                        disabled={isProcessing}
+                        className="hover:bg-gray-100"
+                      >
+                        Review
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-gray-100"
+                        title={review.reasons || review.feedback}
+                      >
+                        <Info className="h-4 w-4 text-gray-500" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
