@@ -10,7 +10,8 @@ import Completion from '@/components/Completion';
 import DocumentPreview from '@/components/DocumentPreview';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, FileText, User } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 const Workflow = () => {
   const navigate = useNavigate();
@@ -30,8 +31,8 @@ const Workflow = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
+      <div className="container mx-auto px-4 py-6 max-w-6xl">
+        <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
           <div className="flex items-center">
             <Button 
               variant="outline" 
@@ -40,17 +41,29 @@ const Workflow = () => {
               className="mr-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
+              Back
             </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-medical-700">
-                {currentPatient?.name || 'Patient'} Record
-              </h1>
-              <p className="text-gray-500">
-                MRN: {currentPatient?.mrn || 'Unknown'}
-              </p>
-            </div>
           </div>
+          
+          <Card className="p-4 shadow-sm flex items-center space-x-4 bg-white">
+            <div className="bg-primary/10 p-2 rounded-full">
+              <User className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold">{currentPatient?.name || 'Patient'}</h2>
+              <div className="flex items-center text-sm text-gray-500">
+                <span>MRN: {currentPatient?.mrn || 'Unknown'}</span>
+                <span className="mx-2">•</span>
+                <span>{currentPatient?.gender || ''}</span>
+                {currentPatient?.age && (
+                  <>
+                    <span className="mx-2">•</span>
+                    <span>{currentPatient.age} years</span>
+                  </>
+                )}
+              </div>
+            </div>
+          </Card>
         </div>
 
         <Tabs 
@@ -59,27 +72,41 @@ const Workflow = () => {
           className="w-full"
         >
           <TabsList className="grid grid-cols-4 mb-8 w-full max-w-2xl mx-auto">
-            <TabsTrigger value="upload">Upload</TabsTrigger>
-            <TabsTrigger value="soapReview">SOAP Review</TabsTrigger>
-            <TabsTrigger value="icdReview">ICD Review</TabsTrigger>
-            <TabsTrigger value="complete">Complete</TabsTrigger>
+            <TabsTrigger value="upload" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Upload</span>
+            </TabsTrigger>
+            <TabsTrigger value="soapReview" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">SOAP Review</span>
+            </TabsTrigger>
+            <TabsTrigger value="icdReview" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">ICD Review</span>
+            </TabsTrigger>
+            <TabsTrigger value="complete" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Complete</span>
+            </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="upload">
-            <FileUpload />
-          </TabsContent>
-          
-          <TabsContent value="soapReview">
-            <SoapReview />
-          </TabsContent>
-          
-          <TabsContent value="icdReview">
-            <IcdReview />
-          </TabsContent>
-          
-          <TabsContent value="complete">
-            <DocumentPreview />
-          </TabsContent>
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <TabsContent value="upload">
+              <FileUpload />
+            </TabsContent>
+            
+            <TabsContent value="soapReview">
+              <SoapReview />
+            </TabsContent>
+            
+            <TabsContent value="icdReview">
+              <IcdReview />
+            </TabsContent>
+            
+            <TabsContent value="complete">
+              <DocumentPreview />
+            </TabsContent>
+          </div>
         </Tabs>
       </div>
     </div>
