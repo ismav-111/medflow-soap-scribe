@@ -1,5 +1,4 @@
 
-import { MedFlowProvider } from '@/context/MedFlowContext';
 import Navbar from '@/components/Navbar';
 import FileUpload from '@/components/FileUpload';
 import SoapReview from '@/components/SoapReview';
@@ -93,14 +92,12 @@ const StepConnector = ({ completed = false }: { completed?: boolean }) => {
 
 const Index = () => {
   return (
-    <MedFlowProvider>
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <Navbar />
-        <main className="flex-1 py-8">
-          <MedFlowSteps />
-        </main>
-      </div>
-    </MedFlowProvider>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Navbar />
+      <main className="flex-1 py-8">
+        <MedFlowSteps />
+      </main>
+    </div>
   );
 };
 
