@@ -21,7 +21,11 @@ const IcdReview = () => {
     allIcdCodesApproved,
     addIcdReview,
     updateIcdReview,
-    deleteIcdReview 
+    deleteIcdReview,
+    selectedIcdCodes,
+    toggleIcdCodeSelection,
+    selectAllIcdCodes,
+    setCurrentStep
   } = useMedFlow();
   
   const [selectedReview, setSelectedReview] = useState<IcdReviewType | null>(null);
@@ -98,6 +102,17 @@ const IcdReview = () => {
     }
   };
 
+  // Handle select all checkbox
+  const handleSelectAll = () => {
+    const allSelected = selectedIcdCodes.length === icdReviews.length;
+    selectAllIcdCodes(!allSelected);
+  };
+
+  // Handle completing the review and moving to next step
+  const handleComplete = () => {
+    setCurrentStep('complete');
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'approved':
@@ -111,12 +126,12 @@ const IcdReview = () => {
 
   return (
     <Card className="w-full max-w-4xl mx-auto backdrop-blur-sm bg-white/80 border border-gray-200 shadow-md">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center justify-between pb-4">
         <div>
-          <CardTitle className="text-2xl font-semibold text-center text-medical-700">
+          <CardTitle className="text-2xl font-semibold text-medical-700">
             Review ICD Codes
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription>
             Review and provide feedback on the generated ICD codes
           </CardDescription>
         </div>
@@ -129,12 +144,16 @@ const IcdReview = () => {
         </Button>
       </CardHeader>
       <CardContent>
-        <div className="rounded-lg overflow-hidden border border-gray-100">
+        <div className="rounded-lg overflow-hidden border border-gray-100 mb-6">
           <Table>
             <TableHeader className="bg-gray-50">
               <TableRow>
                 <TableHead className="w-10 text-center">
-                  <Checkbox id="select-all" />
+                  <Checkbox 
+                    id="select-all" 
+                    checked={selectedIcdCodes.length === icdReviews.length && icdReviews.length > 0}
+                    onCheckedChange={handleSelectAll}
+                  />
                 </TableHead>
                 <TableHead className="w-24 font-mono">Code</TableHead>
                 <TableHead>Term</TableHead>
@@ -149,8 +168,8 @@ const IcdReview = () => {
                   <TableCell className="text-center">
                     <Checkbox 
                       id={`review-${review.id}`}
-                      checked={review.status === 'approved'}
-                      disabled={true}
+                      checked={selectedIcdCodes.includes(review.id)}
+                      onCheckedChange={() => toggleIcdCodeSelection(review.id)}
                     />
                   </TableCell>
                   <TableCell className="font-mono text-medical-700 font-medium">{review.icdCode}</TableCell>
@@ -198,18 +217,27 @@ const IcdReview = () => {
                   </TableCell>
                 </TableRow>
               ))}
+              {icdReviews.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                    No ICD codes available. Add codes using the button above.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>
 
-        {allIcdCodesApproved && (
-          <div className="mt-6 flex justify-center">
-            <Button className="bg-medical-600 hover:bg-medical-700 flex items-center gap-2 shadow-sm">
-              <FileText className="h-4 w-4" />
-              Generate Final Report
-            </Button>
-          </div>
-        )}
+        <div className="mt-6 flex justify-center">
+          <Button 
+            className="bg-medical-600 hover:bg-medical-700 flex items-center gap-2"
+            disabled={!allIcdCodesApproved}
+            onClick={handleComplete}
+          >
+            <FileText className="h-4 w-4" />
+            Generate Final Report
+          </Button>
+        </div>
 
         {selectedReview && (
           <FeedbackDialog 

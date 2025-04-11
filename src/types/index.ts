@@ -20,3 +20,14 @@ export interface FeedbackForm {
   isCorrect: boolean;
   feedbackText: string;
 }
+
+export interface Patient {
+  id: string;
+  name: string;
+  age: number;
+  gender: string;
+  dob: string;
+  mrn: string;
+  lastVisit?: string;
+  status: 'active' | 'inactive' | 'pending';
+}

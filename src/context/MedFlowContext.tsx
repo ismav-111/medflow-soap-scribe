@@ -1,6 +1,5 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { SoapData, IcdReview, FeedbackForm } from '@/types';
+import { SoapData, IcdReview, FeedbackForm, Patient } from '@/types';
 import { processPdf, processIcdCodes, processFeedback } from '@/services/mockService';
 import { toast } from '@/hooks/use-toast';
 
@@ -12,6 +11,7 @@ interface MedFlowContextType {
   icdReviews: IcdReview[];
   soapConfirmed: boolean;
   currentStep: 'upload' | 'soapReview' | 'icdReview' | 'complete';
+  setCurrentStep: (step: 'upload' | 'soapReview' | 'icdReview' | 'complete') => void;
   handleFileUpload: (file: File) => Promise<void>;
   confirmSoap: () => Promise<void>;
   provideFeedback: (id: string, feedback: FeedbackForm) => Promise<void>;
@@ -20,6 +20,15 @@ interface MedFlowContextType {
   addIcdReview: (review: IcdReview) => void;
   updateIcdReview: (review: IcdReview) => void;
   deleteIcdReview: (id: string) => void;
+  patients: Patient[];
+  currentPatient: Patient | null;
+  setCurrentPatient: (patient: Patient | null) => void;
+  addPatient: (patient: Patient) => void;
+  updatePatient: (patient: Patient) => void;
+  deletePatient: (id: string) => void;
+  selectedIcdCodes: string[];
+  toggleIcdCodeSelection: (id: string) => void;
+  selectAllIcdCodes: (selected: boolean) => void;
 }
 
 const MedFlowContext = createContext<MedFlowContextType | undefined>(undefined);
@@ -31,6 +40,30 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
   const [icdReviews, setIcdReviews] = useState<IcdReview[]>([]);
   const [soapConfirmed, setSoapConfirmed] = useState(false);
   const [currentStep, setCurrentStep] = useState<'upload' | 'soapReview' | 'icdReview' | 'complete'>('upload');
+  const [patients, setPatients] = useState<Patient[]>([
+    {
+      id: '1',
+      name: 'John Doe',
+      age: 45,
+      gender: 'Male',
+      dob: '1979-05-15',
+      mrn: 'MRN-12345',
+      lastVisit: '2023-03-10',
+      status: 'active'
+    },
+    {
+      id: '2',
+      name: 'Jane Smith',
+      age: 32,
+      gender: 'Female',
+      dob: '1992-11-22',
+      mrn: 'MRN-23456',
+      lastVisit: '2023-04-05',
+      status: 'active'
+    }
+  ]);
+  const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);
+  const [selectedIcdCodes, setSelectedIcdCodes] = useState<string[]>([]);
 
   const handleFileUpload = async (file: File) => {
     try {
@@ -107,7 +140,6 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
           : "Your feedback has been processed",
       });
       
-      // Check if all reviews are approved to move to complete step
       const allApproved = icdReviews
         .filter(r => r.id !== id)
         .every(r => r.status === 'approved') && feedback.isCorrect;
@@ -131,7 +163,6 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Add a new ICD review
   const addIcdReview = (review: IcdReview) => {
     try {
       setIcdReviews(prev => [...prev, review]);
@@ -149,7 +180,6 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Update an existing ICD review
   const updateIcdReview = (review: IcdReview) => {
     try {
       setIcdReviews(prev => 
@@ -169,7 +199,6 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Delete an ICD review
   const deleteIcdReview = (id: string) => {
     try {
       const reviewToDelete = icdReviews.find(r => r.id === id);
@@ -198,6 +227,80 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
     setCurrentStep('upload');
   };
 
+  const addPatient = (patient: Patient) => {
+    try {
+      setPatients(prev => [...prev, patient]);
+      toast({
+        title: "Success",
+        description: `Patient ${patient.name} added successfully`,
+      });
+    } catch (error) {
+      console.error('Error adding patient:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add patient",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const updatePatient = (patient: Patient) => {
+    try {
+      setPatients(prev => 
+        prev.map(p => p.id === patient.id ? patient : p)
+      );
+      toast({
+        title: "Success",
+        description: `Patient ${patient.name} updated successfully`,
+      });
+    } catch (error) {
+      console.error('Error updating patient:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update patient",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deletePatient = (id: string) => {
+    try {
+      const patientToDelete = patients.find(p => p.id === id);
+      setPatients(prev => prev.filter(p => p.id !== id));
+      toast({
+        title: "Success", 
+        description: patientToDelete 
+          ? `Patient ${patientToDelete.name} deleted successfully` 
+          : "Patient deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete patient",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const toggleIcdCodeSelection = (id: string) => {
+    setSelectedIcdCodes(prev => {
+      if (prev.includes(id)) {
+        return prev.filter(codeId => codeId !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  };
+
+  const selectAllIcdCodes = (selected: boolean) => {
+    if (selected) {
+      setSelectedIcdCodes(icdReviews.map(review => review.id));
+    } else {
+      setSelectedIcdCodes([]);
+    }
+  };
+
   const allIcdCodesApproved = icdReviews.every(review => review.status === 'approved');
 
   const value = {
@@ -208,6 +311,7 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
     icdReviews,
     soapConfirmed,
     currentStep,
+    setCurrentStep,
     handleFileUpload,
     confirmSoap,
     provideFeedback,
@@ -215,7 +319,16 @@ export const MedFlowProvider = ({ children }: { children: ReactNode }) => {
     resetWorkflow,
     addIcdReview,
     updateIcdReview,
-    deleteIcdReview
+    deleteIcdReview,
+    patients,
+    currentPatient,
+    setCurrentPatient,
+    addPatient,
+    updatePatient,
+    deletePatient,
+    selectedIcdCodes,
+    toggleIcdCodeSelection,
+    selectAllIcdCodes
   };
 
   return <MedFlowContext.Provider value={value}>{children}</MedFlowContext.Provider>;
