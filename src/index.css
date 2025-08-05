@@ -1,92 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Background & Surface Colors */
+    --background: 220 20% 97%;
+    --foreground: 220 13% 18%;
+    --surface: 0 0% 100%;
+    --surface-variant: 220 14% 96%;
 
+    /* Card Colors */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 13% 18%;
 
+    /* Popover Colors */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 13% 18%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary Brand Colors - Medical Blue */
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 210 100% 45%;
+    --primary-light: 210 100% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary Colors - Medical Teal */
+    --secondary: 180 25% 94%;
+    --secondary-foreground: 180 25% 25%;
+    --secondary-hover: 180 25% 88%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Success Colors - Medical Green */
+    --success: 142 69% 58%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 142 69% 95%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Warning Colors - Medical Amber */
+    --warning: 45 96% 64%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 45 96% 95%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Error/Destructive Colors - Medical Red */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-light: 0 84% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Muted Colors */
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --radius: 0.5rem;
+    /* Accent Colors */
+    --accent: 220 14% 96%;
+    --accent-foreground: 220 13% 18%;
 
-    --sidebar-background: 0 0% 98%;
+    /* Border & Input */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 210 100% 50%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Border Radius */
+    --radius: 0.75rem;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
+    /* Sidebar */
+    --sidebar-background: 220 20% 98%;
+    --sidebar-foreground: 220 13% 18%;
+    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 220 13% 18%;
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 210 100% 50%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Background & Surface Colors */
+    --background: 220 23% 9%;
+    --foreground: 220 14% 96%;
+    --surface: 220 23% 11%;
+    --surface-variant: 220 20% 14%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    /* Card Colors */
+    --card: 220 23% 11%;
+    --card-foreground: 220 14% 96%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    /* Popover Colors */
+    --popover: 220 23% 11%;
+    --popover-foreground: 220 14% 96%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Primary Brand Colors */
+    --primary: 210 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 210 100% 55%;
+    --primary-light: 210 100% 15%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary Colors */
+    --secondary: 220 20% 14%;
+    --secondary-foreground: 220 14% 96%;
+    --secondary-hover: 220 20% 18%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    /* Success Colors */
+    --success: 142 69% 58%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 142 30% 15%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    /* Warning Colors */
+    --warning: 45 96% 64%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 45 50% 15%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    /* Error/Destructive Colors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-light: 0 50% 15%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    /* Muted Colors */
+    --muted: 220 20% 14%;
+    --muted-foreground: 220 9% 65%;
+
+    /* Accent Colors */
+    --accent: 220 20% 14%;
+    --accent-foreground: 220 14% 96%;
+
+    /* Border & Input */
+    --border: 220 20% 18%;
+    --input: 220 20% 18%;
+    --ring: 210 100% 60%;
+
+    /* Sidebar */
+    --sidebar-background: 220 23% 9%;
+    --sidebar-foreground: 220 14% 96%;
+    --sidebar-primary: 210 100% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 220 20% 14%;
+    --sidebar-accent-foreground: 220 14% 96%;
+    --sidebar-border: 220 20% 18%;
+    --sidebar-ring: 210 100% 60%;
   }
 }
 
@@ -96,6 +151,83 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Medical Status Indicators */
+  .status-active {
+    @apply bg-success-light text-success border border-success/20;
+  }
+  
+  .status-inactive {
+    @apply bg-muted text-muted-foreground border border-border;
+  }
+  
+  .status-pending {
+    @apply bg-warning-light text-warning border border-warning/20;
+  }
+
+  /* Glass Effect */
+  .glass {
+    @apply backdrop-blur-sm bg-white/80 border border-white/20;
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-sm bg-black/10 border border-white/10;
+  }
+
+  /* Gradient Effects */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-hover)) 100%);
+  }
+
+  .gradient-surface {
+    background: linear-gradient(135deg, hsl(var(--surface)) 0%, hsl(var(--surface-variant)) 100%);
+  }
+
+  /* Interactive Elements */
+  .interactive-hover {
+    @apply transition-all duration-200 hover:scale-[1.02] hover:shadow-lg;
+  }
+
+  .button-hover {
+    @apply transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+  }
+
+  /* Typography Styles */
+  .heading-1 {
+    @apply text-4xl font-bold tracking-tight text-foreground;
+  }
+
+  .heading-2 {
+    @apply text-3xl font-semibold tracking-tight text-foreground;
+  }
+
+  .heading-3 {
+    @apply text-2xl font-semibold text-foreground;
+  }
+
+  .body-large {
+    @apply text-lg text-muted-foreground;
+  }
+
+  .body-medium {
+    @apply text-base text-muted-foreground;
+  }
+
+  /* Card Styles */
+  .card-elevated {
+    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  .card-stats {
+    @apply card-elevated p-6 space-y-2;
   }
 }

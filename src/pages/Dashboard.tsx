@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMedFlow } from '@/context/MedFlowContext';
@@ -11,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Patient } from '@/types';
-import { Plus, Search, FileText, UserPlus, Users, Trash2, PencilIcon, ChevronRight } from 'lucide-react';
+import { Plus, Search, FileText, UserPlus, Users, Trash2, PencilIcon, ChevronRight, User } from 'lucide-react';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -130,111 +129,134 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">Patient Dashboard</h1>
-          <p className="text-gray-500 mt-1">Manage patient records and documentation</p>
-        </div>
-        <div>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-6 py-8 max-w-7xl">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+          <div className="space-y-2">
+            <h1 className="heading-1">Patient Dashboard</h1>
+            <p className="body-large">Comprehensive patient management and medical records</p>
+          </div>
           <Button 
             onClick={() => setShowAddPatient(true)}
-            className="bg-primary hover:bg-primary/90 gap-2"
+            className="gradient-primary button-hover gap-2 px-6 py-3 text-white shadow-medical"
           >
-            <UserPlus className="h-4 w-4" />
-            Add Patient
+            <UserPlus className="h-5 w-5" />
+            Add New Patient
           </Button>
         </div>
-      </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="shadow-sm hover:shadow transition-shadow duration-200">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Total Patients</CardTitle>
-            <CardDescription>Active patient records</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <Users className="h-8 w-8 text-primary" />
-              <span className="text-3xl font-bold ml-3">{patients.length}</span>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="shadow-sm hover:shadow transition-shadow duration-200">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Active Patients</CardTitle>
-            <CardDescription>Currently in treatment</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <Users className="h-8 w-8 text-green-500" />
-              <span className="text-3xl font-bold ml-3">
-                {patients.filter(p => p.status === 'active').length}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="shadow-sm hover:shadow transition-shadow duration-200">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium">Pending Review</CardTitle>
-            <CardDescription>Documentation awaiting review</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <FileText className="h-8 w-8 text-amber-500" />
-              <span className="text-3xl font-bold ml-3">
-                {patients.filter(p => p.status === 'pending').length}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <Card className="shadow-sm">
-        <CardHeader className="pb-4">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-            <div>
-              <CardTitle>Patient Records</CardTitle>
-              <CardDescription>View and manage patient documentation</CardDescription>
-            </div>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input 
-                placeholder="Search patients..." 
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 w-full md:w-64"
-              />
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="card-stats interactive-hover">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Total Patients</p>
+                <p className="text-3xl font-bold text-foreground">{patients.length}</p>
+                <p className="text-xs text-muted-foreground">Registered in system</p>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-primary-light flex items-center justify-center">
+                <Users className="w-6 h-6 text-primary" />
+              </div>
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
+          
+          <div className="card-stats interactive-hover">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Active Cases</p>
+                <p className="text-3xl font-bold text-foreground">
+                  {patients.filter(p => p.status === 'active').length}
+                </p>
+                <p className="text-xs text-muted-foreground">Currently in treatment</p>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-success-light flex items-center justify-center">
+                <Users className="w-6 h-6 text-success" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="card-stats interactive-hover">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Pending Review</p>
+                <p className="text-3xl font-bold text-foreground">
+                  {patients.filter(p => p.status === 'pending').length}
+                </p>
+                <p className="text-xs text-muted-foreground">Awaiting documentation</p>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-warning-light flex items-center justify-center">
+                <FileText className="w-6 h-6 text-warning" />
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        {/* Patient Records Table */}
+        <div className="card-elevated">
+          <div className="p-6 border-b border-border">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div className="space-y-1">
+                <h2 className="heading-3">Patient Records</h2>
+                <p className="body-medium">Comprehensive patient management and medical documentation</p>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input 
+                    placeholder="Search by name or ID..." 
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-10 w-full lg:w-80 bg-surface border-border"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="overflow-hidden">
             <Table>
-              <TableHeader className="bg-gray-50">
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="hidden md:table-cell">DOB</TableHead>
-                  <TableHead className="hidden md:table-cell">Gender</TableHead>
-                  <TableHead className="hidden md:table-cell">Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+              <TableHeader>
+                <TableRow className="border-border bg-surface-variant/50">
+                  <TableHead className="font-semibold text-foreground">Patient ID</TableHead>
+                  <TableHead className="font-semibold text-foreground">Patient Name</TableHead>
+                  <TableHead className="hidden md:table-cell font-semibold text-foreground">Date of Birth</TableHead>
+                  <TableHead className="hidden lg:table-cell font-semibold text-foreground">Gender</TableHead>
+                  <TableHead className="hidden md:table-cell font-semibold text-foreground">Status</TableHead>
+                  <TableHead className="text-right font-semibold text-foreground">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredPatients.map((patient) => (
-                  <TableRow key={patient.id} className="hover:bg-gray-50/80">
-                    <TableCell className="font-medium">{getShortId(patient.id)}</TableCell>
-                    <TableCell className="font-medium">{patient.name}</TableCell>
-                    <TableCell className="hidden md:table-cell">{patient.dob}</TableCell>
-                    <TableCell className="hidden md:table-cell">{patient.gender}</TableCell>
+                  <TableRow 
+                    key={patient.id} 
+                    className="border-border hover:bg-surface-variant/30 transition-colors"
+                  >
+                    <TableCell className="font-mono text-muted-foreground">
+                      #{getShortId(patient.id)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center">
+                          <User className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground">{patient.name}</p>
+                          <p className="text-sm text-muted-foreground">Age {patient.age}</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell text-muted-foreground">
+                      {patient.dob}
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell text-muted-foreground">
+                      {patient.gender}
+                    </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        patient.status === 'active' ? 'bg-green-100 text-green-800' : 
-                        patient.status === 'inactive' ? 'bg-gray-100 text-gray-800' : 
-                        'bg-amber-100 text-amber-800'
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        patient.status === 'active' ? 'status-active' : 
+                        patient.status === 'inactive' ? 'status-inactive' : 
+                        'status-pending'
                       }`}>
                         {patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}
                       </span>
@@ -245,28 +267,26 @@ const Dashboard = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handlePatientSelect(patient)}
-                          className="hover:bg-primary/10 text-primary flex items-center"
+                          className="hover:bg-primary-light text-primary button-hover"
                         >
-                          Open 
+                          View Details
                           <ChevronRight className="h-4 w-4 ml-1" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleEditClick(patient)}
-                          className="hover:bg-blue-50 text-blue-600"
+                          className="hover:bg-surface-variant text-muted-foreground"
                         >
                           <PencilIcon className="h-4 w-4" />
-                          <span className="sr-only md:not-sr-only md:ml-1">Edit</span>
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDeleteClick(patient)}
-                          className="hover:bg-red-50 text-red-600"
+                          className="hover:bg-destructive-light text-destructive"
                         >
                           <Trash2 className="h-4 w-4" />
-                          <span className="sr-only md:not-sr-only md:ml-1">Delete</span>
                         </Button>
                       </div>
                     </TableCell>
@@ -274,177 +294,231 @@ const Dashboard = () => {
                 ))}
                 {filteredPatients.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                      No patients found
+                    <TableCell colSpan={6} className="text-center py-12">
+                      <div className="flex flex-col items-center space-y-3">
+                        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
+                          <Users className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="font-medium text-foreground">No patients found</p>
+                          <p className="text-sm text-muted-foreground">
+                            {search ? 'Try adjusting your search terms' : 'Get started by adding your first patient'}
+                          </p>
+                        </div>
+                      </div>
                     </TableCell>
                   </TableRow>
                 )}
               </TableBody>
             </Table>
           </div>
-        </CardContent>
-      </Card>
-
+        </div>
+      </div>
+      
       {/* Add Patient Dialog */}
       <Dialog open={showAddPatient} onOpenChange={setShowAddPatient}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle className="text-xl">Add New Patient</DialogTitle>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="heading-3 flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-primary" />
+              Add New Patient
+            </DialogTitle>
+            <p className="text-muted-foreground">Enter patient information to create a new medical record</p>
           </DialogHeader>
-          <div className="grid gap-6 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                name="name"
-                value={newPatient.name}
-                onChange={handleInputChange}
-                placeholder="Enter patient name"
-              />
+          <div className="grid gap-6 py-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-sm font-medium">Full Name *</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={newPatient.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter patient's full name"
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="age" className="text-sm font-medium">Age *</Label>
+                <Input
+                  id="age"
+                  name="age"
+                  type="number"
+                  value={newPatient.age}
+                  onChange={handleInputChange}
+                  placeholder="Enter age"
+                  className="h-11"
+                  min="0"
+                  max="120"
+                />
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
-                name="age"
-                type="number"
-                value={newPatient.age}
-                onChange={handleInputChange}
-                placeholder="Enter age"
-              />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="gender" className="text-sm font-medium">Gender *</Label>
+                <Select onValueChange={handleSelectChange("gender")} value={newPatient.gender}>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="dob" className="text-sm font-medium">Date of Birth *</Label>
+                <Input
+                  id="dob"
+                  name="dob"
+                  type="date"
+                  value={newPatient.dob}
+                  onChange={handleInputChange}
+                  className="h-11"
+                />
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="gender">Gender</Label>
-              <Select onValueChange={handleSelectChange("gender")} value={newPatient.gender}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="dob">Date of Birth</Label>
-              <Input
-                id="dob"
-                name="dob"
-                type="date"
-                value={newPatient.dob}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="mrn">Medical Record Number</Label>
-              <Input
-                id="mrn"
-                name="mrn"
-                value={newPatient.mrn}
-                onChange={handleInputChange}
-                placeholder="Enter MRN"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="status">Status</Label>
-              <Select onValueChange={handleSelectChange("status")} value={newPatient.status}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                </SelectContent>
-              </Select>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="mrn" className="text-sm font-medium">Medical Record Number</Label>
+                <Input
+                  id="mrn"
+                  name="mrn"
+                  value={newPatient.mrn}
+                  onChange={handleInputChange}
+                  placeholder="Enter MRN (optional)"
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status" className="text-sm font-medium">Patient Status</Label>
+                <Select onValueChange={handleSelectChange("status")} value={newPatient.status}>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="pending">Pending Review</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddPatient(false)}>Cancel</Button>
-            <Button onClick={handleAddPatient}>Add Patient</Button>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowAddPatient(false)} className="px-6">
+              Cancel
+            </Button>
+            <Button onClick={handleAddPatient} className="gradient-primary px-6">
+              Create Patient Record
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Edit Patient Dialog */}
       <Dialog open={showEditPatient} onOpenChange={setShowEditPatient}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle className="text-xl">Edit Patient</DialogTitle>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="heading-3 flex items-center gap-2">
+              <PencilIcon className="w-5 h-5 text-primary" />
+              Edit Patient
+            </DialogTitle>
+            <p className="text-muted-foreground">Update patient information</p>
           </DialogHeader>
-          <div className="grid gap-6 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="edit-name">Full Name</Label>
-              <Input
-                id="edit-name"
-                name="name"
-                value={newPatient.name}
-                onChange={handleInputChange}
-                placeholder="Enter patient name"
-              />
+          <div className="grid gap-6 py-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name" className="text-sm font-medium">Full Name *</Label>
+                <Input
+                  id="edit-name"
+                  name="name"
+                  value={newPatient.name}
+                  onChange={handleInputChange}
+                  placeholder="Enter patient's full name"
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-age" className="text-sm font-medium">Age *</Label>
+                <Input
+                  id="edit-age"
+                  name="age"
+                  type="number"
+                  value={newPatient.age}
+                  onChange={handleInputChange}
+                  placeholder="Enter age"
+                  className="h-11"
+                  min="0"
+                  max="120"
+                />
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-age">Age</Label>
-              <Input
-                id="edit-age"
-                name="age"
-                type="number"
-                value={newPatient.age}
-                onChange={handleInputChange}
-                placeholder="Enter age"
-              />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-gender" className="text-sm font-medium">Gender *</Label>
+                <Select onValueChange={handleSelectChange("gender")} value={newPatient.gender}>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-dob" className="text-sm font-medium">Date of Birth *</Label>
+                <Input
+                  id="edit-dob"
+                  name="dob"
+                  type="date"
+                  value={newPatient.dob}
+                  onChange={handleInputChange}
+                  className="h-11"
+                />
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-gender">Gender</Label>
-              <Select onValueChange={handleSelectChange("gender")} value={newPatient.gender}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-dob">Date of Birth</Label>
-              <Input
-                id="edit-dob"
-                name="dob"
-                type="date"
-                value={newPatient.dob}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-mrn">Medical Record Number</Label>
-              <Input
-                id="edit-mrn"
-                name="mrn"
-                value={newPatient.mrn}
-                onChange={handleInputChange}
-                placeholder="Enter MRN"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-status">Status</Label>
-              <Select onValueChange={handleSelectChange("status")} value={newPatient.status}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                </SelectContent>
-              </Select>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-mrn" className="text-sm font-medium">Medical Record Number</Label>
+                <Input
+                  id="edit-mrn"
+                  name="mrn"
+                  value={newPatient.mrn}
+                  onChange={handleInputChange}
+                  placeholder="Enter MRN (optional)"
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-status" className="text-sm font-medium">Patient Status</Label>
+                <Select onValueChange={handleSelectChange("status")} value={newPatient.status}>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="pending">Pending Review</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowEditPatient(false)}>Cancel</Button>
-            <Button onClick={handleUpdatePatient}>Update Patient</Button>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowEditPatient(false)} className="px-6">
+              Cancel
+            </Button>
+            <Button onClick={handleUpdatePatient} className="gradient-primary px-6">
+              Update Patient
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -465,9 +539,9 @@ const Dashboard = () => {
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeletePatient}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
             >
-              Delete
+              Delete Patient
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
